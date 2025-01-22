@@ -1,7 +1,7 @@
-
+//import Login from "./components/Login.tsx";
+import Chat from "./components/Chat.tsx";
 function App() {
-
-  return <h1>Hello Vite - React-ts</h1>
+  return <Chat />
 }
 
 export default App
