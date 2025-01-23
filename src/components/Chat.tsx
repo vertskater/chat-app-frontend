@@ -1,7 +1,9 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, FormEvent, useRef} from "react";
 import {io , Socket} from 'socket.io-client';
+import Room from "./Room.tsx";
 
 import styles from '../styles/Chat.ts';
+import '../styles/Chat.css';
 
 interface ServerToClientEvents {
     receiveMessage: (message: Message) => void;
@@ -23,13 +25,13 @@ interface Message {
 }
 
 export default function Chat()  {
-    const [jwt, setJwt] = useState('');
     const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
     const [messages, setMessages] = useState<Message[]>([])
     const [room, setRoom] = useState('general');
     const [message, setMessage] = useState('');
     const [username, setUsername] = useState('');
     const [error, setError] = useState<Error | null>(null)
+    const msgEndRef= useRef<HTMLDivElement | null>(null)
 
     useEffect((): (() => void) | undefined => {
         const token = localStorage.getItem('jwt-token');
@@ -38,9 +40,9 @@ export default function Chat()  {
             alert('please login first');
             return;
         }
-        setJwt(token);
-        const userId = localStorage.getItem('userId');
-        if(userId) setUsername(username || 'temp user');
+        //setJwt(token);
+        const username = localStorage.getItem('username');
+        if(username) setUsername(username);
         setMessages([]);
         (async () => {
             try {
@@ -64,32 +66,28 @@ export default function Chat()  {
         })
         newSocket.on('receiveMessage', (newMessage)=> {
             setMessages((prevMsg): Message[] => [...prevMsg, newMessage])
+            setUsername(newMessage?.user?.username ?? 'default user');
         });
         newSocket.emit("joinRoom", room);
 
         setSocket(newSocket);
         return () => newSocket.close();
     }, [room, username]);
+    const scrollToBottom = () => {
+        if(msgEndRef.current) {
+            msgEndRef.current.scrollTop = msgEndRef.current.scrollHeight;
+        }
+    }
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSendMessage = async () => {
         if(message.trim() && socket) {
-            const token = localStorage.getItem('jwt-token');
             const user = localStorage.getItem('userId');
-
-            const newMessage = {content: message, room, userId: user!}
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-
             setUsername(user || '');
-            const options = {
-                method: 'POST',
-                headers: {
-                    Authorization: `${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({content: message, room})
-            }
             try {
-              await fetch('http://localhost:3000/chat/messages', options);
               socket.emit('sendMessage', {room, content: message, username: username});
               setMessage("");
             }catch (err) {
@@ -97,17 +95,25 @@ export default function Chat()  {
             }
         }
     }
-
+    const createRoom = (e: FormEvent<HTMLFormElement>, room: string) => {
+        e.preventDefault();
+        setRoom(room);
+    }
     return (
+    <>
         <div style={styles.chatContainer}>
             <div className="error">
                 {error?.message}
             </div>
             <h2>Chat Room: {room}</h2>
-            <div style={styles.messagesContainer}>
+            <div style={({
+                ...styles.messagesContainer,
+                overflowY: "scroll",
+            } as object)}
+                 ref={msgEndRef}>
                 {messages.map((msg, index) => (
-                    <div key={index} style={styles.message}>
-                        <strong>{msg.user?.username}: </strong> {msg.content}
+                    <div key={index} style={styles.message} className={msg.user?.username === username ? 'owner' : ''}>
+                        {msg.content}
                     </div>
                 ))}
             </div>
@@ -124,5 +130,7 @@ export default function Chat()  {
                 </button>
             </div>
         </div>
+        <Room createRoom={createRoom}/>
+    </>
     );
 }

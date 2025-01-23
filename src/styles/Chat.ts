@@ -8,16 +8,21 @@ export default {
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     },
     messagesContainer: {
-        height: "300px",
+        height: "400px",
         overflowY: "scroll" as "scroll",
         border: "1px solid #ccc",
         marginBottom: "10px",
         padding: "10px",
         borderRadius: "4px",
         backgroundColor: "#f9f9f9",
+        display: "flex",
+        flexDirection: "column",
     },
     message: {
-        marginBottom: "8px",
+        padding: "10px",
+        marginBottom: "5px",
+        borderRadius: "5px",
+        display: "flex"
     },
     inputContainer: {
         display: "flex",

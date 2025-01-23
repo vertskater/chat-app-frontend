@@ -19,6 +19,7 @@ export default function Login() {
             if(response.ok) {
                 localStorage.setItem('jwt-token', data.token);
                 localStorage.setItem('userId', data.userId);
+                localStorage.setItem('username', data.username);
                 setError(null);
             }else {
                 setError(new Error(data.msg))
