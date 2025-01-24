@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+
 import style from '../styles/Login.ts';
 import {useNavigate, NavLink} from "react-router-dom";
 
@@ -15,7 +16,7 @@ export default function Login() {
             body: JSON.stringify({ email: username, password }),
         }
         try {
-            const response = await fetch('http://localhost:3000/auth/login', options);
+            const response = await fetch(`${import.meta.env.VITE_FETCH_URL}/auth/login`, options);
             const data = await response.json();
             if(response.ok) {
                 localStorage.setItem('jwt-token', data.token);

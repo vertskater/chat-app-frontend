@@ -46,7 +46,7 @@ export default function Chat()  {
         setMessages([]);
         (async () => {
             try {
-                const response = await fetch(`http://localhost:3000/chat/messages?room=${room}`, {
+                const response = await fetch(`${import.meta.env.VITE_FETCH_URL}/chat/messages?room=${room}`, {
                     method: 'GET',
                     headers: {
                         "Content-Type": "application/json",

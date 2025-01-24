@@ -37,7 +37,7 @@ export default function Register() {
 
         try {
             console.log(JSON.stringify({...formData}));
-            const response = await fetch("http://localhost:3000/auth/register",
+            const response = await fetch(`${import.meta.env.VITE_FETCH_URL}/auth/register`,
                 {
                     headers: {
                         "Content-Type": "application/json",
