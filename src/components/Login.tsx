@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import style from '../styles/Login.ts';
+import {useNavigate, NavLink} from "react-router-dom";
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<Error | null>(null);
-
+    const navigate = useNavigate();
     const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const options = {
@@ -19,8 +20,9 @@ export default function Login() {
             if(response.ok) {
                 localStorage.setItem('jwt-token', data.token);
                 localStorage.setItem('userId', data.userId);
-                localStorage.setItem('username', data.username);
+                localStorage.setItem('username', data.username)
                 setError(null);
+                navigate('/');
             }else {
                 setError(new Error(data.msg))
             }
@@ -30,6 +32,7 @@ export default function Login() {
         }
     }
     return (
+        <>
         <div style={style.container as object}>
             <p style={{padding: '5px', color: 'red'}}>{error?.message}</p>
             <h2 style={style.heading}>Login to Messenger</h2>
@@ -50,6 +53,11 @@ export default function Login() {
                 />
                 <button onClick={(e) => handleLogin(e)} style={style.button}>Login</button>
             </form>
+        <div>
+            Don't have an Account? <NavLink to="/register">Register now</NavLink>
         </div>
+        </div>
+
+    </>
     )
 }

@@ -42,4 +42,10 @@ export default {
         borderRadius: "4px",
         cursor: "pointer",
     },
+    username: {
+        fontWeight: 700,
+        display: "block",
+        marginRight: "5px",
+        color: "#800080"
+    }
 };

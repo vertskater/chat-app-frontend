@@ -113,7 +113,7 @@ export default function Chat()  {
                  ref={msgEndRef}>
                 {messages.map((msg, index) => (
                     <div key={index} style={styles.message} className={msg.user?.username === username ? 'owner' : ''}>
-                        {msg.content}
+                     <span style={styles.username}>{msg.user?.username}: </span> { msg.content}
                     </div>
                 ))}
             </div>
