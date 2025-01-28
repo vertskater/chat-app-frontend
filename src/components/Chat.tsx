@@ -60,7 +60,7 @@ export default function Chat()  {
             }
         })();
 
-        const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3000/', {
+        const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io('chat-app-backend-production-9983.up.railway.app', {
             auth: {token},
             withCredentials: true
         })
